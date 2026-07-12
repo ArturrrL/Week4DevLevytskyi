@@ -36,8 +36,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      
-      - name: Run PyTest with Coverage
+    - name: Run PyTest with Coverage
+        env:
+          PYTHONPATH: .
         run: pytest --cov=myapp --cov-fail-under=70 --cov-report=xml
 
       
