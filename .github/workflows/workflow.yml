@@ -43,3 +43,36 @@ jobs:
         with:
           name: coverage-report
           path: coverage.xml
+
+  # Завдання 3
+  build:
+    needs: test 
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write 
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Update README with Badge
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BADGE="[![CI/CD Pipeline](https://github.com/${{ github.repository }}/actions/workflows/workflow.yml/badge.svg)](https://github.com/${{ github.repository }}/actions/workflows/workflow.yml)"
+          
+          
+          touch README.md
+          
+          
+          if ! grep -qF "$BADGE" README.md; then
+            echo -e "$BADGE\n\n$(cat README.md)" > README.md
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Actions"
+            git add README.md
+            git commit -m "docs: auto-add build status badge"
+            git push
+          else
+            echo "Badge already exists. Skipping."
+          fi
